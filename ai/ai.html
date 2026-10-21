@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TACG AI opponent</title>
+<style>
+  :root { color-scheme: dark; }
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #14161c; color: #e8e8ee; font: 15px/1.45 system-ui, sans-serif; }
+  main { width: min(420px, 92vw); background: #1d2029; border: 1px solid #2d3140; border-radius: 12px; padding: 22px; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  p { margin: 0 0 14px; color: #a4a8b8; }
+  label { display: block; margin: 10px 0 4px; font-size: 13px; color: #a4a8b8; }
+  input, select { box-sizing: border-box; width: 100%; padding: 9px 10px; border-radius: 8px; border: 1px solid #343949; background: #12141a; color: inherit; font: inherit; }
+  button { margin-top: 16px; width: 100%; padding: 10px; border: 0; border-radius: 8px; background: #4f7cff; color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
+  button.stop { background: #3a3f50; }
+  #status { margin-top: 14px; min-height: 1.4em; font-size: 14px; }
+  #status.error { color: #ff7b7b; }
+</style>
+</head>
+<body>
+<main>
+  <h1>TACG AI opponent</h1>
+  <p>Create a room in the game, then enter its code here. The AI joins as the second player and runs entirely in this browser tab: keep the tab open while you play.</p>
+  <label for="server">Game server (WebSocket address)</label>
+  <input id="server" autocomplete="off" spellcheck="false">
+  <label for="room">Room code</label>
+  <input id="room" maxlength="4" autocomplete="off" spellcheck="false" placeholder="ABCD">
+  <label for="level">Difficulty</label>
+  <select id="level"></select>
+  <button id="go">Join as AI</button>
+  <div id="status" aria-live="polite"></div>
+</main>
+<script src="features.js"></script>
+<script src="model.js"></script>
+<script src="bot-client.js"></script>
+<script>
+  const DEFAULT_SERVER = 'wss://YOUR-GAME-SERVER.onrender.com';
+  const $ = id => document.getElementById(id), q = new URLSearchParams(location.search);
+  let bot = null;
+  $('server').value = q.get('server') || DEFAULT_SERVER;
+  $('room').value = (q.get('room') || '').toUpperCase();
+
+  function setStatus(state, text) {
+    $('status').textContent = text;
+    $('status').className = state === 'error' ? 'error' : '';
+    if (state === 'error' || state === 'stopped') { $('go').textContent = 'Join as AI'; $('go').className = ''; bot = null; }
+  }
+  function toggle() {
+    if (bot) { bot.stop(); return; }
+    $('go').textContent = 'Stop AI'; $('go').className = 'stop';
+    bot = TACGBot.start({ server: $('server').value.trim(), room: $('room').value.trim(), model: './', level: $('level').value, onStatus: setStatus });
+  }
+  $('go').addEventListener('click', toggle);
+  fetch('models.json').then(r => r.json()).then(j => {
+    for (const l of j.levels) { const o = document.createElement('option'); o.value = l.id; o.textContent = l.label; $('level').appendChild(o); }
+    $('level').value = q.get('level') || j.default;
+    if (q.get('room') && q.get('server')) toggle();
+  }).catch(() => setStatus('error', 'Could not load models.json'));
+</script>
+</body>
+</html>
