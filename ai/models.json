@@ -6,12 +6,6 @@
    "label": "Easy",
    "temperature": 0,
    "locationVariety": 0.5
-  },
-  {
-   "id": "baby",
-   "label": "Baby",
-   "temperature": 0,
-   "locationVariety": 0.5
   }
  ]
 }
