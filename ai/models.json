@@ -6,6 +6,12 @@
    "label": "Medium",
    "temperature": 0,
    "locationVariety": 0.5
+  },
+  {
+   "id": "hard",
+   "label": "Hard",
+   "temperature": 0,
+   "locationVariety": 0.5
   }
  ]
 }
