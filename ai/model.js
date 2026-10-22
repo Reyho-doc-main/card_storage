@@ -4,6 +4,8 @@
 })(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
 
+  /* width of the value head's hidden layer (used by PPO; DQN ignores the head) */
+  const VALUE_HIDDEN = 64;
   const DEFAULT_CFG = { E: 24, T: 12, slot: 64, hand: 64, set: 32, loc: 24, s1: 256, s2: 256, act: 128, head: 256 };
 
   /* Every learned tensor: [name, shape, init kind]. Order is the storage order in weights.bin. */
@@ -24,6 +26,7 @@
       ['Wp', [cfg.s2, cfg.act], 'w'], ['bp', [cfg.act], 'b'],
       ['Wh1s', [cfg.s2, cfg.head], 'w'], ['Wh1a', [cfg.act, cfg.head], 'w'], ['Wh1i', [cfg.act, cfg.head], 'w'], ['bh1', [cfg.head], 'b'],
       ['Wh2', [cfg.head, 1], 'out'], ['bh2', [1], 'b'],
+      ['Wv1', [cfg.s2, VALUE_HIDDEN], 'w'], ['bv1', [VALUE_HIDDEN], 'b'], ['Wv2', [VALUE_HIDDEN, 1], 'out'], ['bv2', [1], 'b'],
     ];
   }
 
@@ -64,6 +67,15 @@
     return params;
   }
 
+  /* Models saved before the value head existed lack its tensors: give them freshly initialised ones so they stay loadable. */
+  function completeParams(L, cfg, params) {
+    const missing = specFor(L, cfg).filter(([name]) => !params[name]);
+    if (!missing.length) return params;
+    const fresh = initParams(L, cfg, 1), out = Object.assign({}, params);
+    for (const [name] of missing) out[name] = fresh[name];
+    return out;
+  }
+
   function pack(L, cfg, params, meta, extra) {
     const spec = specFor(L, cfg), total = spec.reduce((n, s) => n + size(s[1]), 0), buf = new Float32Array(total), tensors = [];
     let off = 0;
@@ -93,7 +105,7 @@
     /* mix = Wh1a + gate * Wh1i depends only on the state, so it is built once per decision rather than once per action */
     const mix = new Float32Array(cfg.act * cfg.head), emptySlot = new Float32Array(cfg.slot);
     let emptyReady = false;
-    const hHand = new Float32Array(cfg.hand);
+    const hHand = new Float32Array(cfg.hand), hV = new Float32Array(VALUE_HIDDEN);
 
     const card = (buf, off, idx) => { buf.set(P.EMB.subarray(idx * E, idx * E + E), off); buf.set(STATIC.subarray(idx * S, idx * S + S), off + E); };
     /* out[oo..oo+nOut) = relu?(bias + x[xo..xo+nIn) . W) */
@@ -190,7 +202,22 @@
       return q;
     }
 
+    /* state value from the encoded state (valid right after encodeState) */
+    function valueOfState() {
+      dense(hV, 0, hS, 0, cfg.s2, P.Wv1, 0, VALUE_HIDDEN, P.bv1, 0, true);
+      let v = P.bv2[0];
+      for (let j = 0; j < VALUE_HIDDEN; j++) v += hV[j] * P.Wv2[j];
+      return v;
+    }
+
     return {
+      /* scores of every legal action (Q-values for DQN, policy logits for PPO) and the state's value, from one state encoding */
+      evaluate(state, actions, n) {
+        encodeState(state.i, state.f);
+        const scores = new Float32Array(n);
+        for (let r = 0; r < n; r++) scores[r] = qRow(actions.i, actions.f, r);
+        return { scores, value: valueOfState() };
+      },
       q(state, actions, n) {
         encodeState(state.i, state.f);
         const out = new Float32Array(n);
@@ -200,5 +227,5 @@
     };
   }
 
-  return { DEFAULT_CFG, specFor, layoutKey, compatibility, initParams, pack, unpack, createForward, size };
+  return { DEFAULT_CFG, VALUE_HIDDEN, specFor, layoutKey, compatibility, initParams, completeParams, pack, unpack, createForward, size };
 });

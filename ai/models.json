@@ -1,9 +1,9 @@
 {
- "default": "easy",
+ "default": "medium",
  "levels": [
   {
-   "id": "easy",
-   "label": "Easy",
+   "id": "medium",
+   "label": "Medium",
    "temperature": 0,
    "locationVariety": 0.5
   }
