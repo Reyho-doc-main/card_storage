@@ -49,12 +49,14 @@
   const signature = (dec, v) => JSON.stringify([dec.kind, dec.actions.map(a => a.msg || a.pick || a.type), v.dp, v.hp, v.turn]);
 
   /* Joins `room` on `server` as an ordinary second player and plays it with the model.
-     options: { server: 'wss://host', room, name, model: url of the AI folder | { manifest, buffer, meta }, level: 'easy', delayMs, temperature, onStatus }
+     options: { server: 'wss://host', room, name (default: "AI (<level label>)"), model: url of the AI folder | { manifest, buffer, meta }, level: 'easy', delayMs, temperature, onStatus }
      (tests only: WebSocket, choose, policy, session { code, token } to resume a seat) */
   function start(options) {
-    const o = Object.assign({ name: 'AI (DQN)', delayMs: 700, onStatus: () => {} }, options);
+    const o = Object.assign({ delayMs: 700, onStatus: () => {} }, options);
     const WS = o.WebSocket || (typeof WebSocket !== 'undefined' ? WebSocket : null);
     if (!WS) throw new Error('No WebSocket implementation available (use Node 22+ or a browser).');
+    /* shown in the lobby: "AI (Medium)", from the level's label */
+    const displayName = () => (policy && policy.level && policy.level.label ? `AI (${policy.level.label})` : 'AI');
     let ws, stopped = false, policy = null, view = null, session = o.session || null, ctx = freshCtx(), busy = false, sentSignature = null, thinking = false, wake = false, last = null, turnKey = '', turnCount = 0;
     const status = (state, text) => o.onStatus({ state, text });
 
@@ -92,7 +94,7 @@
       ws = new WS(o.server + (CAN_INFLATE ? '/?z=1' : ''));   // the server sends large state messages deflated, about 3x smaller on the wire, like for the normal client
       ws.binaryType = 'arraybuffer';
       let inbox = Promise.resolve();
-      ws.onopen = () => ws.send(JSON.stringify(session ? { t: 'rejoin', code: session.code, token: session.token } : { t: 'join', code: o.room, name: o.name }));
+      ws.onopen = () => ws.send(JSON.stringify(session ? { t: 'rejoin', code: session.code, token: session.token } : { t: 'join', code: o.room, name: o.name || displayName() }));
       ws.onmessage = e => { inbox = inbox.then(async () => receive(JSON.parse(typeof e.data === 'string' ? e.data : await inflate(e.data)))).catch(console.error); };
       ws.onclose = () => { if (!stopped) { status('waiting', 'Reconnecting...'); setTimeout(() => { if (!stopped) connect(); }, 2000); } };
     }
