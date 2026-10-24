@@ -34,7 +34,7 @@
     const asleep = (view.st && view.st.asleep) || [];
     let blockers = 0;
     for (let i = 0; i < FRONT; i++) { const z = view.zones[`front${opp}_${i}`]; if (z && z.ids && z.ids.length && !asleep.includes(z.ids[0])) blockers++; }
-    return st.r === 'Medium' && blockers ? Math.ceil(a / 2) : a;   // engine.js: Medium range halves the damage to the player, rounded up, when an awake front-row operator can block (test/damage_rule.js checks this against the engine)
+    return st.r === 'Medium' && blockers ? Math.floor(a / 2) : a;   // engine.js: Medium range halves the damage to the player, rounded down, when an enemy front-row card can block (test/damage_rule.js checks this against the engine)
   }
 
   /* With probability `variety` a Location pick is replaced by a uniformly random one, so no single Location is always chosen.

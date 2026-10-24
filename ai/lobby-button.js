@@ -5,6 +5,8 @@
    starts the AI in this browser tab; the AI then joins the room through the normal game server like any other player. */
 (function () {
   'use strict';
+  if (window.__TACG_AI_LOBBY__) return;
+  window.__TACG_AI_LOBBY__ = true;
   const BASE = window.TACG_AI_BASE || document.currentScript.src.replace(/[^/]*$/, '');
   const STATUS = { loading: 'Loading AI…', waiting: 'AI is in the room', thinking: 'AI is playing…' };
 
