@@ -18,7 +18,7 @@
   /* Downloads one level (default if omitted) from the AI folder `source`, or takes { manifest, buffer, meta } directly, and builds the policy.
      Rejects weights that do not belong to their card table or to this version of the code. */
   async function loadPolicy(source, levelId) {
-    let manifest, buffer, meta, level = { temperature: 0, locationVariety: 0.3 };
+    let manifest, buffer, meta, level = { temperature: 0, locationVariety: 0.5 };
     if (typeof source === 'string') {
       const base = dirUrl(source), get = getFrom(base), index = await get('models.json').then(r => r.json());
       level = index.levels.find(l => l.id === (levelId || index.default));
