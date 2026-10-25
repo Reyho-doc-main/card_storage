@@ -18,7 +18,7 @@
   /* Downloads one level (default if omitted) from the AI folder `source`, or takes { manifest, buffer, meta } directly, and builds the policy.
      Rejects weights that do not belong to their card table or to this version of the code. */
   async function loadPolicy(source, levelId) {
-    let manifest, buffer, meta, level = { temperature: 0, locationVariety: 0.5 };
+    let manifest, buffer, meta, level = { temperature: 0, locationVariety: 0.3 };
     if (typeof source === 'string') {
       const base = dirUrl(source), get = getFrom(base), index = await get('models.json').then(r => r.json());
       level = index.levels.find(l => l.id === (levelId || index.default));
@@ -57,6 +57,7 @@
     if (!WS) throw new Error('No WebSocket implementation available (use Node 22+ or a browser).');
     /* shown in the lobby: "AI (Medium)", from the level's label */
     const displayName = () => (policy && policy.level && policy.level.label ? `AI (${policy.level.label})` : 'AI');
+    const guard = Features.createTurnGuard();                    // keeps this bot from repeating a free ability over and over
     let ws, stopped = false, policy = null, view = null, session = o.session || null, ctx = freshCtx(), busy = false, sentSignature = null, thinking = false, wake = false, last = null, turnKey = '', turnCount = 0;
     const status = (state, text) => o.onStatus({ state, text });
 
@@ -68,6 +69,7 @@
         for (;;) {
           const v = view, key = v.turn ? v.turn.n + ':' + v.you : 'setup';
           let dec = policy.F.decision(v, ctx);
+          guard.observe(v); dec = guard.filter(dec);
           if (!dec) { status('waiting', v.phase === 'over' ? 'Game over' : v.phase === 'lobby' ? 'Waiting for the host to start' : 'Waiting for the opponent'); return; }
           if (key !== turnKey) { turnKey = key; turnCount = 0; }
           if (++turnCount > MAX_TURN_DECISIONS && dec.kind === 'main') dec = { kind: 'main', actions: dec.actions.filter(a => a.msg.t === 'endTurn') };
@@ -83,6 +85,7 @@
           if (step.pending) { Object.assign(ctx, step.pending); continue; }
           const before = policy.F.decision(v, freshCtx());
           ctx.pid = null; ctx.chosen = []; last = step.send; busy = true; sentSignature = before && signature(before, v);
+          guard.record(step.send);
           ws.send(JSON.stringify(Object.assign({ ok: true }, step.send)));
           setTimeout(() => { if (busy && last === step.send) { busy = false; act(); } }, 5000);
           return;

@@ -329,5 +329,26 @@
     return { layout: L, decision, resolvePrompt, banRejected, encodeState, encodeActions, txtBucket };
   }
 
-  return { create, txtBucket, damageToPlayer, varyLocation, roomMaxHp, DEFAULT_MAX_HP, T, NTYPES };
+  /* Loop guard. A repeatable ability that costs nothing (e.g. the Museum's "move a card") can be used any number of times, so an AI that finds it
+     attractive can shuffle cards back and forth until the turn's decision cap. Each such ability may be used at most `maxUses` times per turn
+     (paid abilities are limited by DP anyway, and one-use abilities by the game). One guard per player; the counts reset when the turn changes. */
+  const MAX_FREE_REPEATS = 2;
+  function createTurnGuard(maxUses = MAX_FREE_REPEATS) {
+    let turn = null, uses = {};
+    const key = msg => `${msg.id}|${msg.key}|${msg.i}`;
+    const looping = a => a.msg.t === 'activate' && a.ability && a.ability.repeat && !a.ability.cost && (uses[key(a.msg)] || 0) >= maxUses;
+    return {
+      observe(view) { const now = view.turn ? `${view.turn.n}:${view.you}` : 'setup'; if (now !== turn) { turn = now; uses = {}; } },
+      /* the decision without the actions that would repeat an ability too often (a decision is never left empty) */
+      filter(dec) {
+        if (!dec || dec.kind !== 'main') return dec;
+        const kept = dec.actions.filter(a => !looping(a));
+        return kept.length && kept.length < dec.actions.length ? Object.assign({}, dec, { actions: kept }) : dec;
+      },
+      /* call with every message that is sent */
+      record(msg) { if (msg && msg.t === 'activate') uses[key(msg)] = (uses[key(msg)] || 0) + 1; },
+    };
+  }
+
+  return { create, createTurnGuard, MAX_FREE_REPEATS, txtBucket, damageToPlayer, varyLocation, roomMaxHp, DEFAULT_MAX_HP, T, NTYPES };
 });
