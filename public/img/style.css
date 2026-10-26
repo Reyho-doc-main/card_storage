@@ -22,7 +22,9 @@ input:focus{border-color:var(--acc)}
 .sub{color:var(--mut);margin:0 0 18px}
 .lcard label{display:block;color:var(--mut);font-size:12px;margin-bottom:14px}
 .lcard label input{display:block;width:100%;margin-top:4px;font-size:16px;color:var(--txt)}
-.row{display:flex;gap:8px}.row input{flex:1;text-transform:uppercase;letter-spacing:4px;text-align:center;font-weight:700;font-size:18px}
+.row{display:flex;gap:8px}
+.row input{flex:1;min-width:0}
+#inCode{text-transform:uppercase;letter-spacing:4px;text-align:center;font-weight:700;font-size:18px}
 .row button{padding:9px 16px}
 .row .primary{flex:1;padding:12px}
 .or{display:flex;align-items:center;gap:10px;color:var(--mut);font-size:12px;margin:16px 0}
@@ -99,9 +101,10 @@ input:focus{border-color:var(--acc)}
 .box div{padding:2px 0;border-bottom:1px solid #ffffff0d}
 .box .sys{color:var(--acc);font-weight:700}
 .box .me b{color:var(--me)}.box .op b{color:var(--opp)}
-#chatform{display:flex;gap:4px;padding:6px;border-top:1px solid var(--line)}
+#chatform{position:relative;display:flex;gap:4px;padding:6px;border-top:1px solid var(--line)}
 #chatform input{flex:1;min-width:0;padding:5px 8px}
 #chatform button{padding:5px 8px}
+#emojiBtn{padding:5px 7px;font-size:15px;line-height:1}
 
 /* banner / toast / preview */
 #banner{position:absolute;left:50%;top:372px;transform:translateX(-50%);z-index:3000;background:#000d;border:2px solid var(--acc);border-radius:14px;padding:12px 26px;font-size:20px;font-weight:800;pointer-events:none;text-align:center}
@@ -229,8 +232,10 @@ button.danger:hover{background:#cf2f2f}
 .lobbycard h1 span:hover,.lobbycard h1 span:focus-visible{background:#ffffff14}
 .lobbycard h1 span.copied{letter-spacing:1px;color:#6ee7a0}
 .sethead{display:flex;align-items:baseline;gap:8px}.sethead small{flex:1}
-.adv{margin-left:auto;font-size:12px;padding:4px 10px;min-height:0}
-.advbox{border:1px dashed var(--line);border-radius:10px;padding:10px 12px;margin:0 0 12px}
+.adv{margin-left:auto;font-size:12px;padding:4px 10px;min-height:0;transition:background .15s, border-color .15s}
+.advbox{border:1px dashed var(--line);border-radius:10px;padding:10px 12px;margin:0 0 12px;max-height:500px;opacity:1;overflow:hidden;box-sizing:border-box;transition:max-height .3s ease, opacity .25s ease, padding .3s ease, margin .3s ease, border-color .3s ease}
+.advbox.hidden{display:block!important;max-height:0;opacity:0;padding-top:0;padding-bottom:0;margin-top:0;margin-bottom:0;border-color:transparent;pointer-events:none;visibility:hidden;transition:max-height .3s ease, opacity .2s ease, padding .3s ease, margin .3s ease, border-color .3s ease, visibility 0s .3s}
+@media (prefers-reduced-motion: reduce){.advbox, .advbox.hidden{transition:none}}
 .lbp .kick{margin-left:8px;font-size:12px;padding:4px 10px;min-height:0;color:#ff8b8b;border-color:#ff8b8b55}
 .lbp .kick:hover,.chip .kick:hover{background:#b42323;color:#fff}
 .chip{display:inline-flex;align-items:center;gap:4px;padding:1px 4px 1px 8px;border:1px solid var(--line);border-radius:999px;margin:2px 2px 0 0}
@@ -248,3 +253,152 @@ button.danger:hover{background:#cf2f2f}
 .chip .kick.x{opacity:0;transition:opacity .12s}
 .chip:hover .kick.x,.chip .kick.x:focus-visible{opacity:1}
 @media (hover:none){.chip .kick.x{opacity:1}}
+
+/* emoji picker (public/emoji.js): a popover attached to <body>, so the scaled, clipped sidebar cannot cut it off */
+.emo{display:none;position:fixed;z-index:10000;flex-direction:column;background:#171920;border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 40px #000c;overflow:hidden;font:13px/1.3 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.emo.on{display:flex;animation:emo-in .12s ease-out}
+@keyframes emo-in{from{opacity:0;transform:translateY(4px) scale(.98)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.emo.on{animation:none}}
+.emo [hidden]{display:none!important}
+.emo-search{padding:8px 8px 6px}
+.emo-search input{width:100%;padding:7px 10px;font-size:13px;border-radius:8px}
+.emo-tabs{display:flex;gap:2px;padding:0 6px 6px;border-bottom:1px solid var(--line)}
+.emo-tabs button,.emo-e{all:unset;box-sizing:border-box;cursor:pointer;text-align:center;border-radius:8px;line-height:1}
+.emo-tabs button{flex:1;padding:6px 0;font-size:16px;opacity:.55;border-bottom:2px solid transparent;border-radius:6px 6px 0 0}
+.emo-tabs button:hover{opacity:.9;background:#ffffff12}
+.emo-tabs button[aria-pressed=true]{opacity:1;border-bottom-color:var(--acc)}
+.emo-body{position:relative;flex:1;overflow-y:auto;overscroll-behavior:contain;padding:0 6px 6px;scrollbar-width:thin}
+.emo-sec h3{position:sticky;top:0;z-index:1;margin:0;padding:8px 4px 4px;background:#171920;color:var(--mut);font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.emo-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:1px}
+.emo-e{display:grid;place-items:center;aspect-ratio:1;font-size:22px;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+.emo-e:hover,.emo-e:focus-visible{background:#ffffff1f}
+.emo-e:focus-visible,.emo-tabs button:focus-visible{outline:2px solid var(--acc);outline-offset:-2px}
+.emo-empty{padding:28px 8px;text-align:center;color:var(--mut)}
+.emo-foot{display:flex;align-items:center;gap:8px;height:38px;padding:0 12px;border-top:1px solid var(--line);color:var(--mut);background:#14151b}
+.emo-prev{font-size:22px;line-height:1;min-width:26px;text-align:center;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+.emo-prev:empty{display:none}
+.emo-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* beta test box on the landing page */
+.beta {
+  margin: 24px 0 20px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #ffffff08;
+}
+
+#betaOpen:not(.hidden) {
+  display: flex !important;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.beta-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.beta-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.beta-row input {
+  flex: 1;
+  min-width: 0;
+}
+
+.beta-title {
+  flex: 1;
+  min-width: 0;
+  font-weight: 600;
+}
+
+.beta-title small {
+  display: block;
+  margin-top: 2px;
+  color: var(--mut);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.switch {
+  position: relative;
+  flex: none;
+  width: 44px;
+  height: 24px;
+  padding: 0;
+  border-radius: 999px;
+  background: #2a2d36;
+}
+
+.switch:hover {
+  background: #343845;
+}
+
+.switch i {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #cfd3dc;
+  transition: transform .15s, background .15s;
+}
+
+.switch[aria-checked=true], .switch[aria-checked=true]:hover {
+  background: var(--acc);
+  border-color: transparent;
+}
+
+.switch[aria-checked=true] i {
+  transform: translateX(20px);
+  background: #111;
+}
+
+.switch:focus-visible {
+  outline: 2px solid var(--acc);
+  outline-offset: 2px;
+}
+
+.linkbtn {
+  margin-top: 2px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--mut);
+  font-size: 12px;
+  text-decoration: underline;
+  align-self: flex-start;
+  cursor: pointer;
+}
+
+.linkbtn:hover {
+  background: none;
+  color: var(--txt);
+}
+
+.verpill {
+  flex: none;
+  align-self: center;
+  margin: 0 8px;
+  color: var(--acc);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .1em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .switch i { transition: none; }
+}
+
+#preload-container {
+  padding-bottom: 12px;
+}
