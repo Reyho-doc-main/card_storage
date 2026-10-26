@@ -282,11 +282,17 @@ button.danger:hover{background:#cf2f2f}
 /* beta test box on the landing page */
 .beta {
   margin: 24px 0 20px;
+}
+/* locked: just the input and button, laid out like the room CODE row; once inside the beta the options get their own panel */
+.beta.open {
   padding: 14px 16px;
   border: 1px solid var(--line);
   border-radius: 12px;
   background: #ffffff08;
 }
+#betaLocked { gap: 8px; }
+#betaLocked input { flex: 1; min-width: 0; }
+#betaLocked button { padding: 9px 16px; }
 
 #betaOpen:not(.hidden) {
   display: flex !important;
