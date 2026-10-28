@@ -137,6 +137,7 @@
     const original = renderLobby;
     renderLobby = function () { original.apply(this, arguments); sync(); };
     setInterval(() => { if (bot && (!S || S.code !== botRoom || spec)) stopBot(); }, 1000);
+    if (S) sync();   // the beta copy is injected after the room's first state arrived: show the panel now, not at the next re-render
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install); else install();
