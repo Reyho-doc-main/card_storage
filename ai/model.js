@@ -21,6 +21,10 @@
       ['Wloc', [cv, cfg.loc], 'w'], ['bloc', [cfg.loc], 'b'],
       ['W1', [stateIn, cfg.s1], 'w'], ['b1', [cfg.s1], 'b'],
       ['W2', [cfg.s1, cfg.s2], 'w'], ['b2', [cfg.s2], 'b'],
+      /* Location gates (FiLM): the two Locations decide how every hidden unit of the state network is scaled and shifted, h = h * (1 + gamma) + beta, so each
+         pairing of Locations works like its own mode of the network instead of a few extra inputs among thousands. All zero at the start: exactly the network without gates. */
+      ['Wg1', [2 * cfg.loc, 2 * cfg.s1], 'zero'], ['bg1', [2 * cfg.s1], 'b'],
+      ['Wg2', [2 * cfg.loc, 2 * cfg.s2], 'zero'], ['bg2', [2 * cfg.s2], 'b'],
       ['Wa1', [actIn, cfg.act], 'w'], ['ba1', [cfg.act], 'b'],
       ['Wa2', [cfg.act, cfg.act], 'w'], ['ba2', [cfg.act], 'b'],
       ['Wp', [cfg.s2, cfg.act], 'w'], ['bp', [cfg.act], 'b'],
@@ -67,7 +71,8 @@
     return params;
   }
 
-  /* Models saved before the value head existed lack its tensors: give them freshly initialised ones so they stay loadable. */
+  /* Models saved before a tensor existed (the value head, the location gates) lack it: give them freshly initialised ones so they stay loadable.
+     The gates start at zero, which is the network without gates, so such a model plays exactly as before until it is trained further. */
   function completeParams(L, cfg, params) {
     const missing = specFor(L, cfg).filter(([name]) => !params[name]);
     if (!missing.length) return params;
@@ -106,6 +111,12 @@
     const mix = new Float32Array(cfg.act * cfg.head), emptySlot = new Float32Array(cfg.slot);
     let emptyReady = false;
     const hHand = new Float32Array(cfg.hand), hV = new Float32Array(VALUE_HIDDEN);
+    /* location gates: the Location features sit in the state vector at locOff; models without gate tensors (saved earlier) behave like all-zero gates */
+    const gated = !!(P.Wg1 && P.Wg2), locOff = L.BOARD * cfg.slot + cfg.hand + L.SETS * cfg.set, film = new Float32Array(2 * Math.max(cfg.s1, cfg.s2));
+    function modulate(h, n, W, bias) {
+      dense(film, 0, sIn, locOff, 2 * cfg.loc, W, 0, 2 * n, bias, 0, false);
+      for (let j = 0; j < n; j++) h[j] = h[j] * (1 + film[j]) + film[n + j];
+    }
 
     const card = (buf, off, idx) => { buf.set(P.EMB.subarray(idx * E, idx * E + E), off); buf.set(STATIC.subarray(idx * S, idx * S + S), off + E); };
     /* out[oo..oo+nOut) = relu?(bias + x[xo..xo+nIn) . W) */
@@ -162,7 +173,9 @@
       const title = si[L.I_TITLE];
       for (let k = 0; k < TD; k++) sIn[o + k] = P.TXT[title * TD + k];
       dense(h1, 0, sIn, 0, stateIn, P.W1, 0, cfg.s1, P.b1, 0, true);
+      if (gated) modulate(h1, cfg.s1, P.Wg1, P.bg1);
       dense(hS, 0, h1, 0, cfg.s1, P.W2, 0, cfg.s2, P.b2, 0, true);
+      if (gated) modulate(hS, cfg.s2, P.Wg2, P.bg2);
       dense(gate, 0, hS, 0, cfg.s2, P.Wp, 0, cfg.act, P.bp, 0, true);
       dense(zS, 0, hS, 0, cfg.s2, P.Wh1s, 0, cfg.head, P.bh1, 0, false);
       for (let i = 0; i < cfg.act; i++) { const g = gate[i], r = i * cfg.head; for (let j = 0; j < cfg.head; j++) mix[r + j] = P.Wh1a[r + j] + g * P.Wh1i[r + j]; }

@@ -127,7 +127,8 @@
     if (index && shownBase !== base) { renderLevels(index); shownBase = base; }
     const advanced = document.getElementById('lbAdv'), advancedOpen = !advanced.classList.contains('hidden');
     const isHost = S && !spec && me === S.host, seatFree = S && !(S.filled[0] && S.filled[1]);
-    const show = !!index && advancedOpen && isHost && (seatFree || !!bot);
+    const packsOn = !!(S && S.settings && S.settings.packs && S.settings.packs.length);   // the AI knows nothing about add-on cards: no AI opponent in such a game
+    const show = !!index && advancedOpen && isHost && (seatFree || !!bot) && !packsOn;
     ui.root.classList.toggle('hidden', !show);
     if (!show) setOpen(false);
   }

@@ -259,7 +259,7 @@
       for (let i = 0; i < N_SCALARS; i++) F[sc + i] = vals[i];
       /* every setting other than the idle timer is a "key=value" fact; two hashes per fact keep collisions between facts rare */
       for (const [k, v] of Object.entries(view.settings || {})) {
-        if (ignoredSettings.has(k)) continue;
+        if (ignoredSettings.has(k) || Array.isArray(v)) continue;   // list settings (add-on card packs) are not facts the AI was trained on
         const fact = k + '=' + v;
         F[sc + N_SCALARS + hash32(fact, 0x811c9dc5) % SET_BUCKETS] = 1; F[sc + N_SCALARS + hash32(fact, 0x9747b28c) % SET_BUCKETS] = 1;
       }
@@ -333,6 +333,16 @@
      attractive can shuffle cards back and forth until the turn's decision cap. Each such ability may be used at most `maxUses` times per turn
      (paid abilities are limited by DP anyway, and one-use abilities by the game). One guard per player; the counts reset when the turn changes. */
   const MAX_FREE_REPEATS = 2;
+  /* An inference-time nudge against ending the turn early: DP that is not spent is lost at the end of the turn. Lowers the score of the END action by `bias`
+     while a card could still be played; changes nothing when bias is 0 or the decision is not a main-phase one. Returns the scores to choose from. */
+  function endBias(q, dec, bias) {
+    if (!(bias > 0) || !dec || dec.kind !== 'main') return q;
+    let end = -1, playable = false;
+    for (let i = 0; i < dec.actions.length; i++) { const t = dec.actions[i].type; if (t === T.END) end = i; else if (t === T.PLAY) playable = true; }
+    if (end < 0 || !playable) return q;
+    const out = Array.from(q); out[end] -= bias; return out;
+  }
+
   function createTurnGuard(maxUses = MAX_FREE_REPEATS) {
     let turn = null, uses = {};
     const key = msg => `${msg.id}|${msg.key}|${msg.i}`;
@@ -350,5 +360,5 @@
     };
   }
 
-  return { create, createTurnGuard, MAX_FREE_REPEATS, txtBucket, damageToPlayer, varyLocation, roomMaxHp, DEFAULT_MAX_HP, T, NTYPES };
+  return { create, createTurnGuard, endBias, MAX_FREE_REPEATS, txtBucket, damageToPlayer, varyLocation, roomMaxHp, DEFAULT_MAX_HP, T, NTYPES };
 });

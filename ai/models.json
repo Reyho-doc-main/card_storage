@@ -5,18 +5,21 @@
    "id": "easy",
    "label": "Easy",
    "temperature": 0,
+   "endBias": 0,
    "locationVariety": 0.5
   },
   {
    "id": "medium",
    "label": "Medium",
    "temperature": 0,
+   "endBias": 0,
    "locationVariety": 0.5
   },
   {
    "id": "hard",
    "label": "Hard",
    "temperature": 0,
+   "endBias": 0,
    "locationVariety": 0.5
   }
  ]

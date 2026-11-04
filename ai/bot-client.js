@@ -31,9 +31,9 @@
     return { F, forward, manifest, level };
   }
 
-  function greedy(forward, temperature) {
-    return (state, actions, n) => {
-      const q = forward.q(state, actions, n);
+  function greedy(forward, temperature, endBias) {
+    return (state, actions, n, dec) => {
+      const q = Features.endBias(forward.q(state, actions, n), dec, endBias);
       if (!(temperature > 0)) { let best = 0; for (let i = 1; i < n; i++) if (q[i] > q[best]) best = i; return best; }
       let max = -Infinity; for (let i = 0; i < n; i++) if (q[i] > max) max = q[i];
       const w = Array.from(q, v => Math.exp((v - max) / temperature)), total = w.reduce((a, b) => a + b, 0);
@@ -78,7 +78,7 @@
           if (dec.actions.length > 1) {
             await sleep(o.delayMs);
             if (stopped || v !== view) return;
-            idx = o.choose ? o.choose(v, dec) : Features.varyLocation(dec, policy.pick(policy.F.encodeState(v, ctx), policy.F.encodeActions(v, dec, ctx), dec.actions.length), policy.locationVariety);
+            idx = o.choose ? o.choose(v, dec) : Features.varyLocation(dec, policy.pick(policy.F.encodeState(v, ctx), policy.F.encodeActions(v, dec, ctx), dec.actions.length, dec), policy.locationVariety);
           } else await sleep(Math.min(o.delayMs, 250));
           if (stopped || v !== view) return;
           const action = dec.actions[idx], step = dec.kind === 'prompt' ? policy.F.resolvePrompt(v, ctx, action) : { send: action.msg };
@@ -122,7 +122,7 @@
     const handle = { stop() { stopped = true; try { ws.close(); } catch (e) { /* already closed */ } status('stopped', 'Stopped'); } };
     status('loading', 'Loading the AI model...');
     (o.policy ? Promise.resolve(o.policy) : loadPolicy(o.model, o.level)).then(p => {
-      policy = Object.assign({ pick: greedy(p.forward, o.temperature !== undefined ? o.temperature : p.level.temperature), locationVariety: o.locationVariety !== undefined ? o.locationVariety : (p.level.locationVariety ?? 0.5) }, p);
+      policy = Object.assign({ pick: greedy(p.forward, o.temperature !== undefined ? o.temperature : p.level.temperature, o.endBias !== undefined ? o.endBias : (p.level.endBias || 0)), locationVariety: o.locationVariety !== undefined ? o.locationVariety : (p.level.locationVariety ?? 0.5) }, p);
       if (!stopped) connect();
     }).catch(e => { status('error', String(e.message || e)); stopped = true; });
     return handle;
