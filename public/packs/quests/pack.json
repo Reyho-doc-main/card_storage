@@ -1,0 +1,143 @@
+{
+ "cards": [
+  {
+   "def": "quest:ANewHope",
+   "name": "A New Hope",
+   "kind": "quest",
+   "img": "cards/quest_ANewHope.webp",
+   "key": "quest_anewhope",
+   "type": "quest",
+   "text": "Requirements: Obtain Civilight Eterna.\n\nBonus: Passive: When obtaining a fabled card, you may choose to add the card listed in its obtain ability to your hand.",
+   "verified": false,
+   "source": "made in the TACG card maker"
+  },
+  {
+   "def": "quest:Toofewcardstouse",
+   "name": "Too few cards to use",
+   "kind": "quest",
+   "img": "cards/quest_Toofewcardstouse.webp",
+   "key": "quest_toofewcardstouse",
+   "type": "quest",
+   "text": "Requirements: For 3 consecutive rounds, start the turn with less than 8 cards in your hand. If you are the first player, the first round does not count.\n\nBonus: Passive: You may replace operators and field arts on your side of the field if there are no available spots to summon operators or summons. Draw 1 additional card at the start of every turn.",
+   "verified": false,
+   "source": "made in the TACG card maker"
+  },
+  {
+   "def": "quest:SleepingDragon",
+   "name": "Sleeping Dragon",
+   "kind": "quest",
+   "img": "cards/quest_SleepingDragon.webp",
+   "key": "quest_sleepingdragon",
+   "type": "quest",
+   "text": "Requirements: For 5 consecutive rounds, your location’s ability should not activate (a passive effect triggering considers as an activation)\n\nBonus: Passive: Your location has no cost or requirements, and may be activated twice per round. You may activate your opponent’s location once per round.",
+   "verified": false,
+   "source": "made in the TACG card maker"
+  },
+  {
+   "def": "quest:Rainbows",
+   "name": "Rainbows",
+   "kind": "quest",
+   "img": "cards/quest_Rainbows.webp",
+   "key": "quest_rainbows",
+   "type": "quest",
+   "text": "Requirements: When you obtain this card, reveal it to your opponent. At the start of your turn, if there are a total of 5 or more cards with coloured names (white names are not counted) in your graveyard, gain 6 DP, draw 1 card and deal 3 damage to your opponent. Then, discard this quest card and get a random quest card not yet obtained.",
+   "verified": false,
+   "source": "made in the TACG card maker"
+  },
+  {
+   "def": "quest:OneMission",
+   "name": "One Mission",
+   "kind": "quest",
+   "img": "cards/quest_OneMission.webp",
+   "key": "quest_onemission",
+   "type": "quest",
+   "text": "Requirements: Have 4 operators on field or in hand at one time which shares a class.\n\nBonus: Passive: Your cards cost 1 DP less, up to a minimum of 0 DP. When you play a factionless card, you may choose to retreat a card sharing its class on the field.",
+   "verified": false,
+   "source": "made in the TACG card maker"
+  },
+  {
+   "def": "quest:Healing",
+   "name": "Healing",
+   "kind": "quest",
+   "img": "cards/quest_Healing.webp",
+   "key": "quest_healing",
+   "type": "quest",
+   "text": "Requirements: Heal a total of 9 HP from cards on the field (Stolen or any healed HP above the maximum HP limit is not included in this calculation.)\n\nBonus: Passive: For every 3 HP you heal, deal 1 damage to your opponent.",
+   "verified": false,
+   "source": "made in the TACG card maker"
+  },
+  {
+   "def": "quest:GoneForever",
+   "name": "Gone Forever",
+   "kind": "quest",
+   "img": "cards/quest_GoneForever.webp",
+   "key": "quest_goneforever",
+   "type": "quest",
+   "text": "Requirements: Destroy and/or Neutralise 6 cards which are in your opponent’s hand.\n\nBonus: Passive: At the start of your turn, 1 random card in your opponent’s hand is sent to the graveyard. If that card is an operator, your opponent loses 1 HP. If the card is a field arts, that card is neutralised instead.",
+   "verified": false,
+   "source": "made in the TACG card maker"
+  },
+  {
+   "def": "quest:Gambling",
+   "name": "Gambling",
+   "kind": "quest",
+   "img": "cards/quest_Gambling.webp",
+   "key": "quest_gambling",
+   "type": "quest",
+   "text": "Requirements: When you obtain this card, reveal it to your opponent. At the start of your turn, roll 2 d6 dice. If both dice are a 5 or higher, steal 2 cards of your choice from your opponent’s graveyard and 1 card on your opponent’s field.",
+   "verified": false,
+   "source": "made in the TACG card maker"
+  },
+  {
+   "def": "quest:DoesntHurtToBePrepared",
+   "name": "Doesn't Hurt To Be Prepared",
+   "kind": "quest",
+   "img": "cards/quest_DoesntHurtToBePrepared.webp",
+   "key": "quest_doesnthurttobeprepared",
+   "type": "quest",
+   "text": "Requirements: Use equip 4 times\n\nBonus: Passive: All of your controlled operators additionally have Manual equip. When cards which have more than 2 equipped operators are sent to the graveyard, you may instead neutralise 2 equipped operators instead.",
+   "verified": false,
+   "source": "made in the TACG card maker"
+  },
+  {
+   "def": "quest:ClosetodeathOrlife",
+   "name": "Close to death? Or life?",
+   "kind": "quest",
+   "img": "cards/quest_ClosetodeathOrlife.webp",
+   "key": "quest_closetodeathorlife",
+   "type": "quest",
+   "text": "Requirements: For 4 consecutive rounds, start the turn with less than 10 HP.\n\nBonus: Instant: You may choose to heal up to 5 HP.\nBonus: Passive: Every round, you may choose to take 3 damage to target and destroy an operator (this is considered as an Arts effect), or take 2 damage to randomly destroy 1 card in your opponent’s hand.",
+   "verified": false,
+   "source": "made in the TACG card maker"
+  },
+  {
+   "def": "quest:Arts",
+   "name": "Arts",
+   "kind": "quest",
+   "img": "cards/quest_Arts.webp",
+   "key": "quest_arts",
+   "type": "quest",
+   "text": "Requirements: Play a total of 6 Field Arts\n\nBonus: Passive: At the end of your turn, if your opponent has a field arts in their hand, they reveal their whole hand to you.\nBonus: Active: You may choose to destroy any 1 field arts on the field.",
+   "verified": false,
+   "source": "made in the TACG card maker"
+  },
+  {
+   "def": "quest:Army",
+   "name": "Army",
+   "kind": "quest",
+   "img": "cards/quest_Army.webp",
+   "key": "quest_army",
+   "type": "quest",
+   "text": "Requirements: At the start of 5 consecutive rounds, have a non-sleeping operator on your field. Summons are not considered operators for this calculation.\n\nBonus: React: Can only be used once per turn. Target the enemy and lower it’s attack and defense by 3 until the end of the turn. If this ability is used against a target with more than 4 attack, draw a card.",
+   "verified": false,
+   "source": "made in the TACG card maker"
+  }
+ ],
+ "help": [],
+ "packs": [
+  {
+   "name": "Quests",
+   "description": "Quest cards"
+  }
+ ]
+}
