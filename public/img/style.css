@@ -233,6 +233,10 @@ button.danger:hover{background:#cf2f2f}
 .lobbycard h1 span.copied{letter-spacing:1px;color:#6ee7a0}
 .sethead{display:flex;align-items:baseline;gap:8px}.sethead small{flex:1}
 .adv{margin-left:auto;font-size:12px;padding:4px 10px;min-height:0;transition:background .15s, border-color .15s}
+.excl{border:1px dashed var(--line);border-radius:10px;padding:8px 12px;margin:0 0 12px}
+.excl summary{cursor:pointer;font-size:13px}.excl summary small{color:var(--mut)}.excl .note{margin:6px 0}.excl .row{align-items:center}.excl .row input{flex:1;min-width:0}
+.exclList{display:grid;gap:2px;max-height:260px;overflow:auto;margin-top:8px}
+.exclItem{display:flex;align-items:center;gap:8px;margin:0;padding:2px 0;font-size:13px;color:var(--txt)}.exclItem input{width:auto;margin:0}.exclItem small{color:var(--mut)}
 .advbox{border:1px dashed var(--line);border-radius:10px;padding:10px 12px;margin:0 0 12px;max-height:500px;opacity:1;overflow:hidden;box-sizing:border-box;transition:max-height .3s ease, opacity .25s ease, padding .3s ease, margin .3s ease, border-color .3s ease}
 .advbox.hidden{display:block!important;max-height:0;opacity:0;padding-top:0;padding-bottom:0;margin-top:0;margin-bottom:0;border-color:transparent;pointer-events:none;visibility:hidden;transition:max-height .3s ease, opacity .2s ease, padding .3s ease, margin .3s ease, border-color .3s ease, visibility 0s .3s}
 @media (prefers-reduced-motion: reduce){.advbox, .advbox.hidden{transition:none}}
