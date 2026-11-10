@@ -5,14 +5,15 @@
    starts the AI in this browser tab; the AI then joins the room through the normal game server like any other player. */
 (function () {
   'use strict';
-  const SERVER_COPY = new URL(document.currentScript.src, location.href).origin === location.origin;
+  const SCRIPT = document.currentScript;   // null when the file is injected instead of loaded by a script tag
+  const SERVER_COPY = !!SCRIPT && new URL(SCRIPT.src, location.href).origin === location.origin;
   const FLAG = '__TACG_AI_LOBBY_' + (SERVER_COPY ? 'SERVER' : 'PUBLIC') + '__', ID = SERVER_COPY ? 'lbAIBeta' : 'lbAI';   // both copies can run on one page: each keeps its own panel
   if (window[FLAG]) return;
   window[FLAG] = true;
   /* Two copies of this file can exist. The production one is hosted publicly (GitHub Pages) and offers the production AI in every room except rooms of the beta version.
      The beta one is served by the game server itself, only to players with a beta session (the beta AI files sit next to it), and offers the beta AI in beta rooms only.
      Nothing here names any beta file: the copy tells which one it is by where it was loaded from, and loads the models from its own folder. */
-  const BASE = window.TACG_AI_BASE || document.currentScript.src.replace(/[^/]*$/, '');
+  const BASE = window.TACG_AI_BASE || (SCRIPT ? SCRIPT.src.replace(/[^/]*$/, '') : '');
   const baseFor = () => BASE;
   const offeredHere = () => { const beta = !!(S && S.version === 'beta'); return SERVER_COPY ? beta : !beta && window.TACG_AI_PROD !== false; };
   const STATUS = { loading: 'Loading AI…', waiting: 'AI is in the room', thinking: 'AI is playing…' };

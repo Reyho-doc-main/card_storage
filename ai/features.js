@@ -360,5 +360,11 @@
     };
   }
 
-  return { create, createTurnGuard, endBias, MAX_FREE_REPEATS, txtBucket, damageToPlayer, varyLocation, roomMaxHp, DEFAULT_MAX_HP, T, NTYPES };
+  /* counts the decisions each seat has made in the current turn; the other seat answering in between must not reset a seat's count */
+  function createTurnCounter() {
+    let turn = null, counts = [0, 0];
+    return { count(turnId, seat) { if (turnId !== turn) { turn = turnId; counts = [0, 0]; } return ++counts[seat]; } };
+  }
+
+  return { create, createTurnGuard, createTurnCounter, endBias, MAX_FREE_REPEATS, txtBucket, damageToPlayer, varyLocation, roomMaxHp, DEFAULT_MAX_HP, T, NTYPES };
 });
