@@ -1,0 +1,20 @@
+{
+ "name": "Endfield",
+ "cards": [
+  { "name": "Zhuang Fangyi", "art": "main_ZhuangFangyi.webp", "kind": "main" },
+  { "name": "Perlica", "art": "main_Perlica.webp", "kind": "main" },
+  { "name": "Ember", "art": "main_Ember.webp", "kind": "main" },
+  { "name": "Wulfgard", "art": "main_Wulfgard.webp", "kind": "main" },
+  { "name": "Xaihi", "art": "main_Xaihi.webp", "kind": "main" },
+  { "name": "Electric Pylon", "art": "extra_ElectricPylon.webp", "kind": "extra" },
+  { "name": "Alesh", "art": "main_Alesh.webp", "kind": "main" },
+  { "name": "Typhoeus", "art": "main_Typhoeus.webp", "kind": "main" },
+  { "name": "Mr Dolly", "art": "extra_MrDolly.webp", "kind": "extra" },
+  { "name": "Gilberta", "art": "main_Gilberta.webp", "kind": "main" },
+  { "name": "Tangtang", "art": "main_Tangtang.webp", "kind": "main" },
+  { "name": "Arclight", "art": "main_Arclight.webp", "kind": "main" },
+  { "name": "Ardelia", "art": "main_Ardelia.webp", "kind": "main" },
+  { "name": "Endministrator", "art": "main_Endministrator.webp", "kind": "main" },
+  { "name": "Automated Industry Complex", "art": "location_AutomatedIndustryComplex.webp", "kind": "location" }
+ ]
+}
