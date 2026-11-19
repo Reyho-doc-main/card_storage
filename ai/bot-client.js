@@ -49,8 +49,9 @@
   const signature = (dec, v) => JSON.stringify([dec.kind, dec.actions.map(a => a.msg || a.pick || a.type), v.dp, v.hp, v.turn]);
 
   /* Joins `room` on `server` as an ordinary second player and plays it with the model.
-     options: { server: 'wss://host', room, name (default: "AI (<level label>)"), model: url of the AI folder | { manifest, buffer, meta }, level: 'easy', delayMs, temperature, onStatus }
-     (tests only: WebSocket, choose, policy, session { code, token } to resume a seat) */
+     options: { server: 'wss://host', room, name (default: "AI (<level label>)"), model: url of the AI folder | { manifest, buffer, meta }, level: 'easy', delayMs, temperature, onStatus,
+                session: { code, token } to take back the seat it had (after the page was reloaded), onSession(session): called with that { code, token } every time the AI has joined or rejoined }
+     (tests only: WebSocket, choose, policy) */
   function start(options) {
     const o = Object.assign({ delayMs: 700, onStatus: () => {} }, options);
     const WS = o.WebSocket || (typeof WebSocket !== 'undefined' ? WebSocket : null);
@@ -105,7 +106,7 @@
     function receive(m) {
       if (m.t === 'joined') {
         if (m.spectator) { status('error', 'That room is full: the AI needs a free seat.'); handle.stop(); return; }
-        session = { code: m.code, token: m.token }; status('waiting', 'Joined room ' + m.code);
+        session = { code: m.code, token: m.token }; status('waiting', 'Joined room ' + m.code); if (o.onSession) o.onSession(session);
       } else if (m.t === 'replaced') { status('error', 'This seat was taken over by another connection.'); handle.stop(); }
       else if (m.t === 'state') {
         view = m;
