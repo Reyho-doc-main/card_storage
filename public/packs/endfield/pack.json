@@ -1,5 +1,6 @@
 {
  "name": "Endfield",
+ "author": "Reyho",
  "packs": [
   {
    "name": "Endfield",
@@ -14,7 +15,7 @@
    "img": "main_ZhuangFangyi.webp",
    "key": "main_zhuangfangyi",
    "type": "unit",
-   "text": "Manual: Friendly cards with Illusory may attack the enemy's back row cards opposite them until the end of this turn.\nProtocol: Target a friendly card with a countdown and increase its countdown by 1.",
+   "text": "Manual: Friendly cards with Illusory may attack the enemy's back row cards directly opposite them until the end of this turn.\nProtocol: Target a friendly card with a countdown and increase its countdown by 1.",
    "cost": 3,
    "atk": 4,
    "dfn": 2,
@@ -105,7 +106,7 @@
    "img": "main_Alesh.webp",
    "key": "main_alesh",
    "type": "arts",
-   "text": "Instant: Either Rescue an Endfield card or Summon an Endfield card in the extra deck. Then, if you control a card with Illusory, you may reduce its countdown by 1.",
+   "text": "Instant: Either Rescue an Endfield card or Summon an Endfield card in the extra deck (If the Summoned Card has Illusory, you may choose to place it in the back row). Then, if you control a card with Illusory, you may reduce its countdown by 1.",
    "cost": 3,
    "cls": "Vanguard",
    "faction": "Endfield"
