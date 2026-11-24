@@ -1,5 +1,4 @@
 {
- "author": "Reyho",
  "cards": [
   {
    "def": "quest:ANewHope",
@@ -138,7 +137,8 @@
  "packs": [
   {
    "name": "Quests",
-   "description": "Quest cards"
+   "description": "Quest cards",
+   "author": "Reyho"
   }
  ]
 }

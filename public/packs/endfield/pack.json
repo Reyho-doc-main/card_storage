@@ -1,10 +1,9 @@
 {
- "name": "Endfield",
- "author": "Reyho",
  "packs": [
   {
    "name": "Endfield",
-   "description": "Endfield expansion cards"
+   "description": "Endfield expansion",
+   "author": "Reyho"
   }
  ],
  "cards": [
